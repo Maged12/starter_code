@@ -57,24 +57,32 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
             itemBuilder: (context, index) {
               return ListTile(
-                trailing: SizedBox(
-                  width: 110.0,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.edit, color: Colors.blue),
-                        onPressed: () {},
-                      ),
-                      IconButton(
-                        icon: const Icon(
-                          Icons.delete,
-                          color: Colors.blue,
-                        ),
-                        onPressed: () {},
-                      ),
-                    ],
-                  ),
+                trailing: Selector<NotesProvider, int>(
+                  selector: (_, notesProvider) =>
+                      notesProvider.editOrDeleteIndex,
+                  builder: (_, editOrDeleteIndex, __) => editOrDeleteIndex ==
+                          index
+                      ? SizedBox(
+                          width: 110.0,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              IconButton(
+                                icon:
+                                    const Icon(Icons.edit, color: Colors.blue),
+                                onPressed: () {},
+                              ),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.blue,
+                                ),
+                                onPressed: () {},
+                              ),
+                            ],
+                          ),
+                        )
+                      : const SizedBox.shrink(),
                 ),
                 title: Text(value[index].title!),
                 subtitle: Selector<NotesProvider, bool>(
@@ -84,7 +92,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       : const SizedBox.shrink(),
                 ),
                 onTap: () {},
-                onLongPress: () {},
+                onLongPress: () =>
+                    context.read<NotesProvider>().changeIndex(index),
               );
             }),
       ),
