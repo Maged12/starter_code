@@ -82,8 +82,7 @@ class _EditScreenState extends State<EditScreen> {
           children: [
             TextFormField(
               controller: _titleController,
-              initialValue: null,
-              enabled: true,
+              enabled: widget.screenType != ScreenType.view,
               decoration: const InputDecoration(
                 hintText: 'Type the title here',
               ),
@@ -95,8 +94,7 @@ class _EditScreenState extends State<EditScreen> {
             Expanded(
               child: TextFormField(
                   controller: _descriptionController,
-                  enabled: true,
-                  initialValue: null,
+                  enabled: widget.screenType != ScreenType.view,
                   maxLines: null,
                   expands: true,
                   decoration: const InputDecoration(
