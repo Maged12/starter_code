@@ -6,16 +6,14 @@ class EditScreen extends StatefulWidget {
   final ScreenType screenType;
   final Note? note;
 
-  static Route route(ScreenType type, {Note? note}) =>
-      MaterialPageRoute(
+  static Route route(ScreenType type, {Note? note}) => MaterialPageRoute(
         builder: (_) => EditScreen(
           screenType: type,
           note: note,
         ),
       );
 
-  const EditScreen(
-      {required this.screenType, this.note, Key? key})
+  const EditScreen({required this.screenType, this.note, Key? key})
       : super(key: key);
 
   @override
@@ -44,20 +42,32 @@ class _EditScreenState extends State<EditScreen> {
     super.dispose();
   }
 
+  String getScreenTitle() {
+    switch (widget.screenType) {
+      case ScreenType.add:
+        return "Add new Note";
+      case ScreenType.edit:
+        return "Edit Note";
+      case ScreenType.view:
+        return "View Note";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: Container(),
         centerTitle: true,
-        title: const Text('App Bar Title'),
+        title: Text(getScreenTitle()),
         actions: [
-          IconButton(
-              icon: const Icon(
-                Icons.check_circle,
-                size: 30,
-              ),
-              onPressed: () {}),
+          if (widget.screenType != ScreenType.view)
+            IconButton(
+                icon: const Icon(
+                  Icons.check_circle,
+                  size: 30,
+                ),
+                onPressed: () {}),
           IconButton(
               icon: const Icon(
                 Icons.cancel_sharp,
