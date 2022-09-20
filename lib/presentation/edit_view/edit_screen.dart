@@ -1,17 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:map_exam/app/enums.dart';
+import 'package:map_exam/models/note.dart';
 
 class EditScreen extends StatefulWidget {
-  static Route route() => MaterialPageRoute(builder: (_) => const EditScreen());
+  final ScreenType screenType;
+  final Note? note;
 
-  const EditScreen({Key? key}) : super(key: key);
+  static Route route(ScreenType type, {Note? note}) =>
+      MaterialPageRoute(
+        builder: (_) => EditScreen(
+          screenType: type,
+          note: note,
+        ),
+      );
+
+  const EditScreen(
+      {required this.screenType, this.note, Key? key})
+      : super(key: key);
 
   @override
   State<EditScreen> createState() => _EditScreenState();
 }
 
 class _EditScreenState extends State<EditScreen> {
-  final _titleController = TextEditingController();
-  final _descriptionController = TextEditingController();
+  late final TextEditingController _titleController;
+  late final TextEditingController _descriptionController;
+
+  @override
+  void initState() {
+    _titleController = TextEditingController(
+      text: widget.screenType == ScreenType.add ? "" : widget.note!.title,
+    );
+    _descriptionController = TextEditingController(
+      text: widget.screenType == ScreenType.add ? "" : widget.note!.content,
+    );
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

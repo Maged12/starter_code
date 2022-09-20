@@ -21,8 +21,8 @@ class Database {
       .snapshots()
       .map((querySnapshot) => querySnapshot.docs.map((e) => e.data()).toList());
 
-  void addNote(Note note) {
-    collectionRef.add(note);
+  void addNote(String docPath, Note note) {
+    collectionRef.doc(docPath).set(note);
   }
 
   void deleteNote(String docPath) {

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:map_exam/app/enums.dart';
 import 'package:map_exam/models/note.dart';
+import 'package:map_exam/presentation/edit_view/edit_screen.dart';
 import 'package:map_exam/presentation/notes_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -18,6 +20,7 @@ class HomeScreen extends StatefulWidget {
           child: const HomeScreen(),
         ),
       );
+
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
@@ -51,52 +54,56 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Consumer<List<Note>>(
         builder: (BuildContext context, value, _) => ListView.separated(
-            itemCount: value.length,
-            separatorBuilder: (context, index) => const Divider(
-                  color: Colors.blueGrey,
-                ),
-            itemBuilder: (context, index) {
-              return ListTile(
-                trailing: Selector<NotesProvider, int>(
-                  selector: (_, notesProvider) =>
-                      notesProvider.editOrDeleteIndex,
-                  builder: (_, editOrDeleteIndex, __) => editOrDeleteIndex ==
-                          index
-                      ? SizedBox(
-                          width: 110.0,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              IconButton(
-                                icon:
-                                    const Icon(Icons.edit, color: Colors.blue),
-                                onPressed: () {},
+          itemCount: value.length,
+          separatorBuilder: (context, index) => const Divider(
+            color: Colors.blueGrey,
+          ),
+          itemBuilder: (context, index) {
+            final note = value[index];
+            return ListTile(
+              trailing: Selector<NotesProvider, int>(
+                selector: (_, notesProvider) => notesProvider.editOrDeleteIndex,
+                builder: (_, editOrDeleteIndex, __) => editOrDeleteIndex ==
+                        index
+                    ? SizedBox(
+                        width: 110.0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.edit, color: Colors.blue),
+                              onPressed: () => Navigator.of(context).push(
+                                EditScreen.route(ScreenType.edit, note: note),
                               ),
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.delete,
-                                  color: Colors.blue,
-                                ),
-                                onPressed: () => Database()
-                                    .deleteNote("Document ${value[index].id}"),
+                            ),
+                            IconButton(
+                              icon: const Icon(
+                                Icons.delete,
+                                color: Colors.blue,
                               ),
-                            ],
-                          ),
-                        )
-                      : const SizedBox.shrink(),
-                ),
-                title: Text(value[index].title!),
-                subtitle: Selector<NotesProvider, bool>(
-                  selector: (_, notesProvider) => notesProvider.isShowContent,
-                  builder: (_, isShowContent, __) => isShowContent
-                      ? Text(value[index].content!)
-                      : const SizedBox.shrink(),
-                ),
-                onTap: () {},
-                onLongPress: () =>
-                    context.read<NotesProvider>().changeIndex(index),
-              );
-            }),
+                              onPressed: () =>
+                                  Database().deleteNote("Document ${note.id}"),
+                            ),
+                          ],
+                        ),
+                      )
+                    : const SizedBox.shrink(),
+              ),
+              title: Text(note.title!),
+              subtitle: Selector<NotesProvider, bool>(
+                selector: (_, notesProvider) => notesProvider.isShowContent,
+                builder: (_, isShowContent, __) => isShowContent
+                    ? Text(note.content!)
+                    : const SizedBox.shrink(),
+              ),
+              onTap: () => Navigator.of(context).push(
+                EditScreen.route(ScreenType.view, note: note),
+              ),
+              onLongPress: () =>
+                  context.read<NotesProvider>().changeIndex(index),
+            );
+          },
+        ),
       ),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -118,7 +125,9 @@ class _HomeScreenState extends State<HomeScreen> {
             heroTag: 'Add a new note',
             child: const Icon(Icons.add),
             tooltip: 'Add a new note',
-            onPressed: () {},
+            onPressed: () => Navigator.of(context).push(
+              EditScreen.route(ScreenType.add),
+            ),
           ),
         ],
       ),
