@@ -2,18 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:map_exam/app/enums.dart';
 import 'package:map_exam/models/note.dart';
 
+import '../../app/database.dart';
+
 class EditScreen extends StatefulWidget {
   final ScreenType screenType;
   final Note? note;
+  final int? newNoteId;
 
-  static Route route(ScreenType type, {Note? note}) => MaterialPageRoute(
+  static Route route(ScreenType type, {Note? note, int? id}) =>
+      MaterialPageRoute(
         builder: (_) => EditScreen(
           screenType: type,
           note: note,
+          newNoteId: id,
         ),
       );
 
-  const EditScreen({required this.screenType, this.note, Key? key})
+  const EditScreen(
+      {required this.screenType, this.note, this.newNoteId, Key? key})
       : super(key: key);
 
   @override
@@ -67,13 +73,37 @@ class _EditScreenState extends State<EditScreen> {
                   Icons.check_circle,
                   size: 30,
                 ),
-                onPressed: () {}),
+                onPressed: () {
+                  if (widget.screenType == ScreenType.edit) {
+                    final Map<String, Object?> data = {};
+                    if (widget.note!.title != _titleController.text) {
+                      data['title'] = _titleController.text;
+                    }
+                    if (widget.note!.content != _descriptionController.text) {
+                      data['content'] = _descriptionController.text;
+                    }
+                    if (data.isNotEmpty) {
+                      Database()
+                          .updateNote("Document ${widget.note!.id}", data);
+                    }
+                  } else {
+                    Database().addNote(
+                      "Document ${widget.newNoteId}",
+                      Note(
+                        id: widget.newNoteId,
+                        title: _titleController.text,
+                        content: _descriptionController.text,
+                      ),
+                    );
+                  }
+                  Navigator.of(context).pop();
+                }),
           IconButton(
               icon: const Icon(
                 Icons.cancel_sharp,
                 size: 30,
               ),
-              onPressed: () {}),
+              onPressed: () => Navigator.of(context).pop()),
         ],
       ),
       body: Container(

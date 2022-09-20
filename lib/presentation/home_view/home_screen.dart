@@ -126,7 +126,8 @@ class _HomeScreenState extends State<HomeScreen> {
             child: const Icon(Icons.add),
             tooltip: 'Add a new note',
             onPressed: () => Navigator.of(context).push(
-              EditScreen.route(ScreenType.add),
+              EditScreen.route(ScreenType.add,
+                  id: context.read<List<Note>>().length + 1),
             ),
           ),
         ],

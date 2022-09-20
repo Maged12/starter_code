@@ -28,4 +28,8 @@ class Database {
   void deleteNote(String docPath) {
     collectionReference.doc(docPath).delete();
   }
+
+  void updateNote(String docPath, Map<String, Object?> data) {
+    collectionReference.doc(docPath).update(data);
+  }
 }
